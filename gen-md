@@ -1,0 +1,88 @@
+#!/usr/bin/env zsh
+
+# start
+START_TIME=`date`
+
+LD="$HOME/.last-day"
+mkdir $LD
+
+# Fetch dayone files
+
+DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents"
+cp -r  $DO/DayOneAudios $DO/DayOnePhotos $DO/DayOnePDFAttachments $DO/DayOne.sqlite $LD/
+
+# create CSV with attachment info
+ATTACH=$LD/attachment.csv
+sqlite3 -csv $LD/DayOne.sqlite "SELECT ZMD5, ZIDENTIFIER, ZDO_ENTITYNAME, ZTYPE FROM ZATTACHMENT;" > $ATTACH
+
+MAINDIR="$LD/day-one-export"
+test -d $MAINDIR && rm -rf $MAINDIR || mkdir -p $MAINDIR 
+
+create_md_file() {
+	ID=$1 
+	CREATION_DATE=$2
+	FILE_NAME=$3 
+	DIR=$4 
+	ALTITUDE=$5 
+	LONGITUDE=$6 
+	STATE=$7 
+	CITY=$8 
+	ADDRESS=$9 
+	PLACE_NAME=$10 
+	CONDITIONSDESCRIPTION=$11 
+	WEATHER_CODE=$12 
+	MD=$13
+
+	FILE_NAME=`echo $FILE_NAME | sed 's/[^a-zA-Z0-9\.\-]//g'`
+	FILE_NAME="`echo $FILE_NAME | sed -E 's/ /-/g' | sed -E 's/[()]//g' | sed -E 's/_$//g' | tr '[:upper:]' '[:lower:]'`.md"
+	DIR=`echo $DIR | sed 's/[^a-zA-Z0-9\.\-]//g'`
+	MD=`echo $MD | sed 's/@@@/\n/g'`
+	MD=`echo $MD | sed 's/^"//g'`
+	MD=`echo $MD | sed 's/"$//g'`
+	MD=`echo $MD | sed 's/\n{3}/\n/g'`
+	MD=`zsh fmt-links $MD $ATTACH`
+	MD="---
+created_date: $CREATION_DATE
+altitude: $ALTITUDE
+longitude: $LONGITUDE
+state: $STATE
+city: $CITY
+address: $ADDRESS
+place_name: $PLACE_NAME
+conditions_description: $CONDITIONSDESCRIPTION
+weather_code: $WEATHER_CODE
+---
+
+$MD"
+
+	# CREATE THE FILE 
+	test -d "$MAINDIR/$DIR" || mkdir -p "$MAINDIR/$DIR" 
+ 	CREATION_DATE=$(date -j -f "%Y-%m-%d" "$CREATION_DATE" "+%B %d, %Y")
+	FILE_PATH="$MAINDIR/$DIR/$FILE_NAME"
+
+	echo $MD > $FILE_PATH
+}
+
+sqlite3 -csv $LD/DayOne.sqlite "`cat query-entry.sql`" > $LD/ladaex.csv
+
+# Replace new line within ""
+awk -v RS='"' 'NR % 2 == 0 { gsub("\n", "@@@") } { printf("%s%s", $0, RT) }' $LD/ladaex.csv | sed 's/^"//; s/"$//; s/""/"/g' > $LD/ladaex-fmt.csv && rm $LD/ladaex.csv
+
+exec < "$LD/ladaex-fmt.csv"
+read header
+
+while IFS=, read -A row
+do
+	create_md_file $row
+done
+
+cp -r $LD/DayOnePDFAttachments $LD/day-one-export/pdfattachment
+cp -r $LD/DayOnePhotos $LD/day-one-export/photo
+cp -r $LD/DayOneAudios $LD/day-one-export/audio
+
+tree $MAINDIR | grep files
+
+echo $START_TIME
+
+# end
+date
