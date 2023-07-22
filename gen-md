@@ -2,12 +2,12 @@
 
 # start
 START_TIME=`date`
+echo $START_TIME
 
 LD="$HOME/.last-day"
-mkdir $LD
+test -d $LD && rm -rf $LD && mkdir $LD || mkdir $LD
 
 # Fetch dayone files
-
 DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents"
 cp -r  $DO/DayOneAudios $DO/DayOnePhotos $DO/DayOnePDFAttachments $DO/DayOne.sqlite $LD/
 
@@ -82,7 +82,12 @@ cp -r $LD/DayOneAudios $LD/day-one-export/audio
 
 tree $MAINDIR | grep files
 
-echo $START_TIME
-
 # end
-date
+END_TIME=`date`
+echo $END_TIME
+
+START_TIME=$(date -j -f "%a %b %d %H:%M:%S %Z %Y" "$START_TIME" "+%s")
+END_TIME=$(date -j -f "%a %b %d %H:%M:%S %Z %Y" "$END_TIME" "+%s")
+
+DURATION=$(($END_TIME - $START_TIME))
+echo "$DURATION seconds"
