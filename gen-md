@@ -2,7 +2,7 @@
 
 # start
 START_TIME=`date`
-echo $START_TIME
+echo "Started at: $START_TIME"
 
 LD="$HOME/.last-day"
 test -d $LD && rm -rf $LD && mkdir $LD || mkdir $LD
@@ -79,15 +79,20 @@ done
 cp -r $LD/DayOnePDFAttachments $LD/day-one-export/pdfattachment
 cp -r $LD/DayOnePhotos $LD/day-one-export/photo
 cp -r $LD/DayOneAudios $LD/day-one-export/audio
+rm -rf $LD/DayOneAudios $LD/DayOnePhotos $LD/DayOnePDFAttachments $LD/attachment.csv $LD/ladaex-fmt.csv
 
-tree $MAINDIR | grep files
+TOTALDIR=`ls $MAINDIR | wc -l | sed -E 's#[^0-9]*([0-9]+)[^0-9]*#\1#g'`
+ENTRYDIRCOUNT=`ls $MAINDIR | grep -vE "photo|pdf|audio" | wc -l | sed -E 's#[^0-9]*([0-9]+)[^0-9]*#\1#g'`
+ENTRYCOUNT=`find $MAINDIR -type f | grep -vE "photo|pdf|audio" | wc -l | sed -E 's#[^0-9]*([0-9]+)[^0-9]*#\1#g'`
+
+INFO="$ENTRYDIRCOUNT journals, $ENTRYCOUNT entries"
 
 # end
 END_TIME=`date`
-echo $END_TIME
+echo "Completed at: $END_TIME"
 
 START_TIME=$(date -j -f "%a %b %d %H:%M:%S %Z %Y" "$START_TIME" "+%s")
 END_TIME=$(date -j -f "%a %b %d %H:%M:%S %Z %Y" "$END_TIME" "+%s")
 
 DURATION=$(($END_TIME - $START_TIME))
-echo "$DURATION seconds"
+echo "Duration: $DURATION seconds\n\n$INFO"
