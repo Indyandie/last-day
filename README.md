@@ -12,6 +12,10 @@ Day One is a great tool, but over time it's become less flexible for my needs. U
 - zsh
 - sqlite3
 
+> ### Warning
+> 
+> This is specific to my system you may need to tweek the script.  
+
 ## Instructions 
 
 1. clone this repo
