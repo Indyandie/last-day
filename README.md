@@ -17,13 +17,15 @@ Day One is a great tool, but over time it's become less flexible for my needs. U
 > [!WARNING]\
 > This is specific to my system you may need to tweek the script.  
 
-1. clone this repo
-1. change directory
+1. Clone this repo
+1. Change to repo directory
 1. Run `gen-md`
 
 ```sh
 zsh gen-md
 ```
 
-1. go to '$HOME/.last-day'
+4. Go to `$HOME/.last-day`
+5. Export in `day-one-export`
+6. Profit!!!
 
