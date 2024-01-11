@@ -28,4 +28,3 @@ zsh gen-md
 4. Go to `$HOME/.last-day`
 5. Export in `day-one-export`
 6. Profit!!!
-
