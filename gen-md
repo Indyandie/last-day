@@ -8,8 +8,8 @@ LD="$HOME/.last-day"
 test -d $LD && rm -rf $LD && mkdir $LD || mkdir $LD
 
 # Fetch dayone files
-# DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents"
-DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp/Data/Documents"
+# Fetch Day One files
+DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents"
 cp -r  $DO/DayOneAudios $DO/DayOnePhotos $DO/DayOnePDFAttachments $DO/DayOne.sqlite $LD/
 
 # create CSV with attachment info
