@@ -8,7 +8,8 @@ LD="$HOME/.last-day"
 test -d $LD && rm -rf $LD && mkdir $LD || mkdir $LD
 
 # Fetch dayone files
-DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents"
+# DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents"
+DO="$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp/Data/Documents"
 cp -r  $DO/DayOneAudios $DO/DayOnePhotos $DO/DayOnePDFAttachments $DO/DayOne.sqlite $LD/
 
 # create CSV with attachment info
@@ -16,21 +17,21 @@ ATTACH=$LD/attachment.csv
 sqlite3 -csv $LD/DayOne.sqlite "SELECT ZMD5, ZIDENTIFIER, ZDO_ENTITYNAME, ZTYPE FROM ZATTACHMENT;" > $ATTACH
 
 MAINDIR="$LD/day-one-export"
-test -d $MAINDIR && rm -rf $MAINDIR || mkdir -p $MAINDIR 
+test -d $MAINDIR && rm -rf $MAINDIR || mkdir -p $MAINDIR
 
 create_md_file() {
-	ID=$1 
+	ID=$1
 	CREATION_DATE=$2
-	FILE_NAME=$3 
-	DIR=$4 
-	ALTITUDE=$5 
-	LONGITUDE=$6 
-	STATE=$7 
-	CITY=$8 
-	ADDRESS=$9 
-	PLACE_NAME=$10 
-	CONDITIONSDESCRIPTION=$11 
-	WEATHER_CODE=$12 
+	FILE_NAME=$3
+	DIR=$4
+	ALTITUDE=$5
+	LONGITUDE=$6
+	STATE=$7
+	CITY=$8
+	ADDRESS=$9
+	PLACE_NAME=$10
+	CONDITIONSDESCRIPTION=$11
+	WEATHER_CODE=$12
 	MD=$13
 
 	FILE_NAME=`echo $FILE_NAME | sed 's/[^a-zA-Z0-9\.\-]//g'`
@@ -55,8 +56,8 @@ weather_code: $WEATHER_CODE
 
 $MD"
 
-	# CREATE THE FILE 
-	test -d "$MAINDIR/$DIR" || mkdir -p "$MAINDIR/$DIR" 
+	# CREATE THE FILE
+	test -d "$MAINDIR/$DIR" || mkdir -p "$MAINDIR/$DIR"
  	CREATION_DATE=$(date -j -f "%Y-%m-%d" "$CREATION_DATE" "+%B %d, %Y")
 	FILE_PATH="$MAINDIR/$DIR/$FILE_NAME"
 

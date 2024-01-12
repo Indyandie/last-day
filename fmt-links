@@ -37,7 +37,7 @@ if [[ $string_copy =~ (dayone-moment:/) ]]; then
 		# there was an \r causing trouble, window BS
 		local ID=`echo -n "$match" | sed -E 's#dayone-moment:/(/|audio/|pdfAttachment/)*##g'`
 
-		local LINE=`bat $attach | grep $ID | tr -d "\n" | tr -d "\r"` 
+		local LINE=`bat $attach | grep $ID | tr -d "\n" | tr -d "\r"`
 		local elements=("${(s/,/)LINE}")
 		local MD5=$elements[1]
 		local TYPE=`echo $elements[3] | tr '[:upper:]' '[:lower:]'`
