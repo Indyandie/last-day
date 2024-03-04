@@ -5,7 +5,7 @@ attach=$2
 string_copy=$string
 matches=()
 
-# func to determine the correct extension
+# Determine the correct file extension
 function dirntype() {
 	local EXT=$1
 
@@ -19,25 +19,25 @@ function dirntype() {
 	esac
 }
 
-# First check if the string contains any dayone links
+# Check if the string contains any Day One links
 if [[ $string_copy =~ (dayone-moment:/) ]]; then
 
-	# only looks for links to photos, audio, and PDFs
+	# Only look for links to photos, audio, or PDFs
 	pattern="(dayone-moment:/(/|audio/|pdfAttachment/)[a-zA-Z0-9]{32})"
 	while [[ $string_copy =~ $pattern ]]; do
 	    # Add the matched text to the "matches" array
 	    matches+=("${match[1]}")
 
-			# rm the instance from the string copy
+			# Remove the instance from the string copy
 	    string_copy=${string_copy#*$match[1]}
 	done
 
 	for match in $matches; do
-		# rm the dayone dir
-		# there was an \r causing trouble, window BS
+		# Remove the dayone dir
+		# Note: An \r was causing trouble—Windows BS
 		local ID=`echo -n "$match" | sed -E 's#dayone-moment:/(/|audio/|pdfAttachment/)*##g'`
 
-		local LINE=`bat $attach | grep $ID | tr -d "\n" | tr -d "\r"` 
+		local LINE=`bat $attach | grep $ID | tr -d "\n" | tr -d "\r"`
 		local elements=("${(s/,/)LINE}")
 		local MD5=$elements[1]
 		local TYPE=`echo $elements[3] | tr '[:upper:]' '[:lower:]'`
@@ -45,7 +45,7 @@ if [[ $string_copy =~ (dayone-moment:/) ]]; then
 		local EXT=`dirntype $TYPE $FLTYPE`
 		local FL=../$TYPE\/$MD5.$EXT
 
-		# now replace it in the main string
+		# Replace it in the main string
 		string=`echo $string | sed -E "s#$match#$FL#g"`
 		echo $FL
 	done
